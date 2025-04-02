@@ -3,33 +3,43 @@
 # Refer to the config files in the configs/ directory to see all the available options
 
 checkpointing:
-  run_name: "Run1"
+  run_name: "Run2"
   save_to_hf: true
+  save_every_n_steps: 1
   hf_checkpoint:
-    repo_id: "Run1"
+    repo_id: "Run2"
+  checkpoints_dir: "checkpoints"
+  logs_dir: "logs"
 
   learning_dynamics:
-    batch_size: 256
+    batch_size: 512
 
 model:
     d_model: 96
-    activation_hidden_dim: 384
+    activation_hidden_dim: 192
 
-monitoring:
-  save_to_wandb: true
-  logging:
-    log_level: "INFO"
-    log_every_n_steps: 100
-  wandb:
-    project: "Run1"
-    entity: "Run1"
+data:
+  dataset:
+    name: "pico-lm/pretokenized-dolma"
+  dataloader:
+    # This is the number of examples observed by the model before taking a gradient update step
+    # NOTE: In practice if gradient_accumulation_steps are set to > 1 at each step only batch_size//gradient_accumulation_steps number of examples are fed to the model 
+    batch_size: 1024
+  tokenizer:
+    name: "allenai/OLMo-7B-0724-hf"
+    vocab_size: 50304
 
 training:
-  optimization:
-    gradient_accumulation_steps: 4
-  
   fabric:
-    accelerator: "mps"
+    # NOTE: The total number of GPUs used is num_nodes*num_devices
+    num_nodes: 1  # The total number of nodes you would like to use
+    num_devices: 1  # The number of devices PER node
+    accelerator: "cpu"
+  optimization:
+    learning_rate: 3e-4
+    gradient_accumulation_steps: 64
+  max_steps: 200000
+
   
 evaluation: 
   paloma:

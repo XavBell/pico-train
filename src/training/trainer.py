@@ -298,6 +298,7 @@ class Trainer:
 
         if self.initial_batch_step < self.configs["training"].max_steps:
             self._log_training_configuration()
+            print("✅ Calling _training_loop()")
             final_step = self._training_loop()
         else:
             final_step = self.initial_batch_step
@@ -420,6 +421,7 @@ class Trainer:
         #
         ###############################################################
 
+        print("✅ Entering training loop")
         for sub_batch_step, sub_batch in enumerate(
             self.train_iterator, start=initial_sub_batch_step
         ):
